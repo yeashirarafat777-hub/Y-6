@@ -8,7 +8,7 @@ import useMediaQuery from '../../hooks/useMediaQuery.js';
 import SearchPillInline from '../home/SearchPillInline.jsx';
 
 const NavTab = ({ icon: Icon, label, active, onClick, showNew }) => (
-  <button onClick={onClick} className="relative flex items-center gap-2 px-3 py-2">
+  <button onClick={onClick} className="relative items-center hidden gap-2 px-3 py-2 md:flex">
     <Icon className={`${active ? 'text-black' : 'text-gray-400'}`} />
     <span className={`font-semibold ${active ? 'text-black' : 'text-gray-500'}`}>{label}</span>
     {showNew && (
@@ -23,12 +23,10 @@ const NavTab = ({ icon: Icon, label, active, onClick, showNew }) => (
 const Header = () => {
   const { t } = useI18n();
   const [openLang, setOpenLang] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
   const navigate = useNavigate();
-  const isDesktop = useMediaQuery('(min-width: 768px)');
-
-  // Scroll state to switch center content
-  const [scrolled, setScrolled] = useState(false);
   const onHome = location.pathname === '/';
 
   useEffect(() => {
@@ -38,27 +36,25 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handler);
   }, [location.pathname]);
 
-  // center: show tabs only when home + desktop + not scrolled
   const showTabs = onHome && isDesktop && !scrolled;
-  // otherwise show compact search inside the header (this keeps pill aligned with the logo level)
-  const showInlineSearch = !showTabs;
-
   const go = (path) => () => navigate(path);
 
   return (
     <header className="sticky top-0 z-50 bg-white">
-      {/* Header row with three zones: left (logo), center (tabs or compact search), right (actions) */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-8 md:px-12 h-[64px] grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-        {/* Left - brand */}
-        <Link to="/" className="flex items-center gap-2 text-pink-600">
-          <SiAirbnb className="text-3xl" />
-          <span className="text-2xl font-extrabold tracking-tight">airbnb</span>
+      {/* 3 columns keep center perfectly aligned with logo on all phones */}
+      <div className="max-w-screen-xl mx-auto px-3 sm:px-5 md:px-8 lg:px-12 h-[64px] grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:gap-3 md:gap-4">
+        {/* Left - brand (hide long text on the smallest widths) */}
+        <Link to="/" className="flex items-center min-w-0 gap-2 text-pink-600">
+          <SiAirbnb className="text-2xl sm:text-3xl shrink-0" />
+          <span className="hidden text-xl font-extrabold tracking-tight truncate sm:text-2xl xs:inline">
+            airbnb
+          </span>
         </Link>
 
-        {/* Center - either tabs (home top) or inline search pill (scrolled or other pages or mobile) */}
-        <div className="flex justify-center">
+        {/* Center - Tabs (desktop, top-of-home) OR compact search pill (else) */}
+        <div className="flex justify-center min-w-0">
           {showTabs ? (
-            <nav className="items-center hidden gap-6 md:flex">
+            <nav className="flex items-center gap-3 sm:gap-6">
               <NavTab icon={Home} label={t('navHomes')} active={location.pathname === '/'} onClick={go('/')} />
               <NavTab icon={PartyPopper} label={t('navExperiences')} active={location.pathname === '/experiences'} onClick={go('/experiences')} showNew />
               <NavTab icon={ConciergeBell} label={t('navServices')} active={location.pathname === '/services'} onClick={go('/services')} showNew />
@@ -69,7 +65,7 @@ const Header = () => {
         </div>
 
         {/* Right - actions */}
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-1 sm:gap-2">
           <button className="hidden px-3 py-2 font-semibold rounded-full md:inline hover:bg-gray-100">
             {t('becomeHost')}
           </button>
@@ -82,8 +78,8 @@ const Header = () => {
         </div>
       </div>
 
-      {/* subtle bottom gradient */}
-      <div className="h-6 bg-gradient-to-b from-black/[0.03] to-transparent pointer-events-none" />
+      {/* light bottom gradient */}
+      <div className="h-5 sm:h-6 bg-gradient-to-b from-black/[0.03] to-transparent pointer-events-none" />
 
       <LanguageModal open={openLang} onClose={() => setOpenLang(false)} />
     </header>

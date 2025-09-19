@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Helpful base tweaks for mobile */
+html, body {
+  @apply overflow-x-hidden;
+}
+img {
+  display: block;
+  max-width: 100%;
+}

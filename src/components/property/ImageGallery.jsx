@@ -1,16 +1,24 @@
-const ImageGallery = ({ images }) => {
+const ImageGallery = ({ images = [] }) => {
+  if (!images.length) return null;
+
   return (
-    <div className="mt-6 rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[300px] md:h-[550px]">
-      {/* Main Image */}
-      <div className="md:col-span-2 md:row-span-2">
-        <img src={images[0]} alt="Main view" className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition" />
+    <div className="mt-3 overflow-hidden sm:mt-6 rounded-2xl">
+      {/* Mobile: single large image */}
+      <div className="sm:hidden">
+        <img src={images[0]} alt="Main view" className="w-full h-[220px] xs:h-[240px] object-cover" />
       </div>
-      {/* Other Images */}
-      <div className="hidden md:block"><img src={images[1]} alt="View 2" className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition" /></div>
-      <div className="hidden md:block"><img src={images[2]} alt="View 3" className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition" /></div>
-      <div className="hidden md:block"><img src={images[3]} alt="View 4" className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition" /></div>
-      <div className="hidden md:block"><img src={images[4]} alt="View 5" className="w-full h-full object-cover cursor-pointer hover:brightness-90 transition" /></div>
+
+      {/* Tablet+: grid */}
+      <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-2 h-[260px] md:h-[480px]">
+        <div className="col-span-2 row-span-2">
+          <img src={images[0]} alt="Main" className="object-cover w-full h-full transition hover:brightness-95" />
+        </div>
+        {images.slice(1, 5).map((src, i) => (
+          <img key={i} src={src} alt={`View ${i + 2}`} className="object-cover w-full h-full transition hover:brightness-95" />
+        ))}
+      </div>
     </div>
   );
 };
+
 export default ImageGallery;
